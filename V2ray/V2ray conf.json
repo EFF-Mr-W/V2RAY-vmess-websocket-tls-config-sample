@@ -1,0 +1,66 @@
+{
+  "log":{                 //Log
+    "loglevel":"warning",   // Log level= warning
+    "access":"/var/log/v2ray/access.log",
+    "error":"/var/log/v2ray/error.log"
+  },
+  "inbounds": [
+    {
+      "tag":"vmess",  //vmess protocol
+      "port": 7777,
+      "listen":"127.0.0.1",//Only listen on 127.0.0.1 to prevent machines other than this machine from detecting that port 7777 is open
+      "protocol": "vmess",
+      "sniffing": {
+        "enable":"true",  //traffic sniffing
+        "destOverride":["http","tls"]
+      },
+      "settings": {
+        "clients": [
+          {
+            "id": "804ce7cb-3638-4f96-b7e1-4ccf4a8ac3db",   //sample ID, please regenerate when using UUID generator:https://www.v2fly.org/en_US/awesome/tools.html
+            "alterId": 0,  //VMESSAEAD Anti-sniffing
+            "security":"auto"
+          }
+        ]
+       // "disableInsecureEncryption": false   //Force encryption
+      },
+      "streamSettings": {
+        "network": "ws",  //Use WebSocket transport protocol                   
+       // "security":"tls",
+      //  "tlsSettings":{
+       //   "serverName":"www.yourdomain.com",      //full domain name
+       //   "allowInsecure": false 
+     //   },
+        "wsSettings": {
+        "path": "/websoketpath"  //Make sure it is the same as the path in the Nginx configuration file
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",        //Outbound points to the blocked overseas domain name, since the server is deployed overseas, no additional encryption is required
+      "settings": {},
+      "tag ":" direct"
+    },
+ 
+    {
+     "protocol":"blackhole",        //define blocking protocol
+      "settings":{},
+      "tag":"block"
+    }
+      ],
+      "routing":{                        //enable routing function
+      "domainStrategy":"AsIs",    
+       "rules": [
+        {
+         "type":"field",    //No modification possible
+         "domainMatcher ":"linear",   //Linear matching algorithm
+          "outboundTag":"block",   
+           "protocol":["bittorrent"]    //Locate and block BT
+         }
+       ]
+    }
+}
+
+
